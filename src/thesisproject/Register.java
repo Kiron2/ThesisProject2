@@ -67,10 +67,12 @@ public class Register extends javax.swing.JFrame {
         jLabel6.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(255, 255, 255));
         jLabel6.setText("-");
+        jLabel6.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         jLabel7.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
         jLabel7.setForeground(new java.awt.Color(255, 255, 255));
         jLabel7.setText("X");
+        jLabel7.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jLabel7.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 jLabel7KeyPressed(evt);
@@ -269,11 +271,12 @@ public class Register extends javax.swing.JFrame {
         String address = tfAddress.getText();
         String username = tfUsername.getText();
         String password = String.valueOf(tfPassword.getPassword());
+        String userstatus = "false";
         
         if(fname.isEmpty() || mname.isEmpty() || lname.isEmpty() || address.isEmpty() || username.isEmpty() || password.isEmpty()){
             JOptionPane.showMessageDialog(this, "Some of the field is empty","Error", JOptionPane.ERROR_MESSAGE);
         }else{
-            userRegister(fname, mname, lname, address, username, password);
+            userRegister(fname, mname, lname, address, username, password, userstatus);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -342,14 +345,14 @@ public class Register extends javax.swing.JFrame {
     private javax.swing.JTextField tfUsername;
     // End of variables declaration//GEN-END:variables
 
-    private void userRegister(String fname, String mname, String lname, String address, String username, String password) {
+    private void userRegister(String fname, String mname, String lname, String address, String username, String password, String userstatus) {
         Connection dbconn = DBConnection.connectDB();
         if(dbconn != null){
         try {
             
             
             PreparedStatement st = (PreparedStatement)
-                    dbconn.prepareStatement("INSERT INTO users (firstname,middlename,lastname,address,username,password) VALUES(?,?,?,?,?,?)");
+                    dbconn.prepareStatement("INSERT INTO users (firstname,middlename,lastname,address,username,password,userstatus) VALUES(?,?,?,?,?,?,?)");
 
             st.setString(1, fname);
             st.setString(2, mname);
@@ -359,9 +362,10 @@ public class Register extends javax.swing.JFrame {
             
             //Encrypting the Password in the DATABASE after registering
             st.setString(6, sha256(password));
+            st.setString(7, userstatus);
             
             int res = st.executeUpdate();
-            JOptionPane.showMessageDialog(this, "User Created","Success", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "User Created wait for Admin Approval","Waiting", JOptionPane.INFORMATION_MESSAGE);
             
             tfFirstname.setText("");
             tfMiddlename.setText("");
